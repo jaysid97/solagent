@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolAgent | Autonomous Solana AI Copilot & Sentinel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Solana Web3.js CDN -->
+  <script src="https://unpkg.com/@solana/web3.js@1.95.4/lib/index.iife.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="p-4 md:p-6 lg:p-8">
+
+  <!-- Top Navbar -->
+  <header class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-white/10 mb-8">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-emerald-400 flex items-center justify-center font-black text-xl shadow-lg shadow-purple-500/20">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-2xl font-black tracking-tight flex items-center gap-2">
+          SolAgent <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">AI Autonomous Copilot</span>
+        </h1>
+        <p class="text-xs text-gray-400">Autonomous Solana transactions, micro-escrows, and AI drainer sentinel</p>
+      </div>
+    </div>
+
+    <!-- Cluster Telemetry & Wallet Badges -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs text-gray-300">
+        <span class="pulse-dot"></span>
+        <span>Solana Devnet</span>
+        <span class="text-gray-500">|</span>
+        <span class="text-emerald-400 font-mono" id="slotDisplay">Slot: #312,891,924</span>
+        <span class="text-gray-500">|</span>
+        <span class="text-purple-400 font-mono" id="tpsDisplay">3,420 TPS</span>
+      </div>
+
+      <button id="btnConnectPhantom" class="btn-solana text-xs">
+        <i data-lucide="wallet" class="w-4 h-4"></i>
+        <span id="walletBtnText">Connect Phantom</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Grid -->
+  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Wallet & Security Sentinel Status (4 Cols) -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      
+      <!-- Wallet Card -->
+      <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Active Agent Wallet
+          </h2>
+          <span id="walletBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono">
+            DEVNET KEYPAIR
+          </span>
+        </div>
+
+        <div class="mb-4">
+          <label class="text-xs text-gray-500 block mb-1">Public Key (Base58)</label>
+          <div class="flex items-center gap-2">
+            <input type="text" id="walletAddress" readonly value="Loading agent keypair..." 
+              class="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-gray-300 select-all focus:outline-none">
+            <button id="btnCopyAddress" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white" title="Copy Address">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/20 mb-4">
+          <div>
+            <span class="text-xs text-gray-400 block">Devnet Balance</span>
+            <div class="text-2xl font-black text-white flex items-baseline gap-1">
+              <span id="walletBalance">1.5000</span> <span class="text-xs font-bold text-purple-400">SOL</span>
+            </div>
+          </div>
+          <button id="btnAirdrop" class="btn-primary text-xs py-2 px-3">
+            <i data-lucide="droplet" class="w-3.5 h-3.5"></i>
+            <span>+1 SOL Faucet</span>
+          </button>
+        </div>
+
+        <div class="flex gap-2">
+          <button id="btnNewBurner" class="btn-outline w-full text-xs flex items-center justify-center gap-1.5 py-2">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> New Keypair
+          </button>
+          <a id="btnExplorerLink" href="https://explorer.solana.com/?cluster=devnet" target="_blank" 
+            class="btn-outline w-full text-xs flex items-center justify-center gap-1.5 py-2 text-center text-purple-300">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Explorer
+          </a>
+        </div>
+      </div>
+
+      <!-- AI Security Sentinel Specs Card -->
+      <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-purple-400"></i> AI Drainer Sentinel
+          </h2>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">
+            ACTIVE
+          </span>
+        </div>
+        <p class="text-xs text-gray-400 mb-3">
+          Autonomous safety pre-flight simulator executing before every transaction signature.
+        </p>
+        <div class="space-y-2 text-xs">
+          <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+            <span class="text-gray-400">Program Bytecode Audit</span>
+            <span class="text-emerald-400 font-semibold flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Verified
+            </span>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+            <span class="text-gray-400">Max Drain Ratio Limit</span>
+            <span class="text-emerald-400 font-semibold font-mono">&lt; 60% Cap</span>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+            <span class="text-gray-400">Authority Freeze Protection</span>
+            <span class="text-emerald-400 font-semibold font-mono">Enabled</span>
+          </div>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+            <span class="text-gray-400">Gas & Slippage Simulation</span>
+            <span class="text-emerald-400 font-semibold font-mono">0.000005 SOL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Autonomous Escrows Vault Card -->
+      <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+            <i data-lucide="lock" class="w-4 h-4 text-emerald-400"></i> Active Micro-Escrows
+          </h2>
+          <span id="escrowCountBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono">
+            1 Active
+          </span>
+        </div>
+        <div id="escrowList" class="space-y-2.5 max-h-56 overflow-y-auto">
+          <!-- Dynamic Escrows rendered via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right / Main Column: AI Natural Language Command Console (8 Cols) -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- AI Prompt Bar & Quick Actions -->
+      <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+            <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i> Autonomous Agent Directive
+          </h2>
+          <span class="text-xs text-gray-400">Type natural language prompt or click sample below</span>
+        </div>
+
+        <!-- Prompt Input Form -->
+        <form id="agentForm" class="flex flex-col md:flex-row gap-3 mb-4">
+          <div class="relative flex-1">
+            <input type="text" id="promptInput" 
+              placeholder="e.g. Transfer 0.05 SOL to 7xKX... with memo 'MLH Bounty' or 'Create 0.2 SOL escrow'"
+              class="w-full bg-black/70 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors">
+          </div>
+          <button type="submit" id="btnExecutePrompt" class="btn-primary text-sm px-6 py-3 justify-center">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Execute Agent</span>
+          </button>
+        </form>
+
+        <!-- Quick Prompt Suggestions -->
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button class="quick-pill px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 transition-colors"
+            data-prompt="Transfer 0.05 SOL to 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU with memo 'MLH Hackathon Winner'">
+            💸 Send 0.05 SOL with Memo
+          </button>
+          <button class="quick-pill px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 transition-colors"
+            data-prompt="Create milestone escrow of 0.15 SOL for PR Review #42">
+            🔒 Create 0.15 SOL Escrow
+          </button>
+          <button class="quick-pill px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 transition-colors"
+            data-prompt="Run security scan and drainer audit on my wallet">
+            🛡️ Security Audit & Scan
+          </button>
+          <button class="quick-pill px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 transition-colors"
+            data-prompt="Release escrow escrow-mlh-9901 for verified bounty completion">
+            ⚡ Release Active Escrow
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Execution Plan Card (Dynamically Updated) -->
+      <div id="executionCard" class="glass-card p-5 border-purple-500/30">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 flex items-center gap-2">
+            <i data-lucide="cpu" class="w-4 h-4"></i> AI Agent Reasoning & Execution Log
+          </h3>
+          <span id="agentStatusBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
+            IDLE / READY
+          </span>
+        </div>
+
+        <!-- Terminal Output -->
+        <div id="terminalOutput" class="terminal-box mb-4">
+          <div class="terminal-line text-emerald-400">[SYSTEM] SolAgent Core v1.0.0 initialized on Solana Devnet.</div>
+          <div class="terminal-line text-gray-400">[READY] Autonomous Sentinel listening for prompts. Try executing an action above!</div>
+        </div>
+
+        <!-- Security Audit Result Box -->
+        <div id="auditBox" class="p-4 rounded-xl bg-black/50 border border-white/10 mb-4 hidden">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Sentinel Safety Score</span>
+            <span id="auditScoreBadge" class="text-xs px-2 py-0.5 rounded font-bold font-mono bg-emerald-500/20 text-emerald-400">
+              100/100 (SAFE)
+            </span>
+          </div>
+          <p id="auditRecommendation" class="text-xs text-gray-300 mb-2"></p>
+          <div id="auditFlags" class="space-y-1 text-xs text-amber-400"></div>
+        </div>
+
+        <!-- Action Confirmation & Explorer Link -->
+        <div id="actionResultBox" class="p-4 rounded-xl bg-purple-950/30 border border-purple-500/30 flex flex-col md:flex-row items-center justify-between gap-3 hidden">
+          <div>
+            <div class="text-xs text-gray-400">Transaction Status: <span class="text-emerald-400 font-semibold" id="txStatusText">CONFIRMED</span></div>
+            <div class="text-xs font-mono text-gray-300 truncate max-w-md" id="txSignatureText">Signature: ...</div>
+          </div>
+          <a id="btnViewSolscan" href="#" target="_blank" class="btn-solana text-xs whitespace-nowrap">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>Verify on Solana Explorer</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Verified Transaction Activity Feed -->
+      <div class="glass-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Verifiable Devnet Activity Feed
+          </h3>
+          <span class="text-xs text-gray-500">Live block explorer receipts</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-gray-500 border-b border-white/10">
+              <tr>
+                <th class="pb-2">Action / Intent</th>
+                <th class="pb-2">Amount</th>
+                <th class="pb-2">Signature</th>
+                <th class="pb-2">Status</th>
+                <th class="pb-2 text-right">Verification</th>
+              </tr>
+            </thead>
+            <tbody id="txHistoryTable" class="divide-y divide-white/5">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto mt-12 pt-6 border-t border-white/10 text-center text-xs text-gray-500 flex flex-col md:flex-row items-center justify-between gap-2">
+    <div>Built for <strong>MLH Solana Hackathon</strong> | Tracks: AI Track & DeFi Track</div>
+    <div class="flex items-center gap-4">
+      <a href="https://explorer.solana.com/?cluster=devnet" target="_blank" class="hover:text-purple-400 transition-colors">Solana Devnet</a>
+      <a href="https://github.com" target="_blank" class="hover:text-purple-400 transition-colors">GitHub Repository</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
