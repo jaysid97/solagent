@@ -94,7 +94,7 @@ We built **SolAgent** to solve this: an autonomous on-chain AI copilot that tran
 
 ## 6. Repository Link
 ```
-https://github.com/<your-username>/solagent
+https://github.com/jaysid97/solagent
 ```
 
 ---
